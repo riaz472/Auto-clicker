@@ -125,17 +125,20 @@ def main():
             raise SystemExit()
 
         query = config.behavior.query
-
+# Proxy selection logic with safety check
+    proxy = None
     if args.proxy:
         proxy = args.proxy
     elif config.paths.proxy_file:
         proxies = get_proxies()
-        logger.debug(f"Proxies: {proxies}")
-        proxy = random.choice(proxies)
+        if proxies: # Check agar list khali nahi hai
+            proxy = random.choice(proxies)
+            logger.info(f"Using proxy: {proxy}")
+        else:
+            logger.warning("No proxies found in file. Proceeding without proxy.")
+            proxy = None
     elif config.webdriver.proxy:
         proxy = config.webdriver.proxy
-    else:
-        proxy = None
 
     domains = get_domains()
 
