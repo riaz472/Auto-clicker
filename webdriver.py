@@ -119,41 +119,47 @@ class CustomChrome(undetected_chromedriver.Chrome):
             else:
                 sleep(0.05 * config.behavior.wait_factor)
 
-    import seleniumbase
-from typing import Optional
-
 import seleniumbase
 from typing import Optional
+import os
 
 def create_seleniumbase_driver(
     proxy: Optional[str] = None, 
     user_agent: Optional[str] = None, 
-    plugin_folder_name: Optional[str] = None  # Teesri argument ab fixed hai
+    plugin_folder_name: Optional[str] = None
 ) -> tuple:
     """
     Create SeleniumBase Chrome webdriver instance.
-    Arguments accept kar liye hain taaki TypeError na aaye.
+    Accepts 3 arguments to match ad_clicker.py calls.
     """
     
-    # SeleniumBase automatically proxy aur agent handle karta hai
+    # Driver configuration
     driver = seleniumbase.Driver(
         browser="chrome",
         uc=True,                # Undetected mode
-        headless2=True,         # Actions ke liye headless mode
+        headless2=True,         # Headless mode for GitHub Actions
         proxy=proxy,            
         agent=user_agent,       
         no_sandbox=True,        
         disable_gpu=True,
-        incognito=True,
-        undo_detools=True
+        incognito=True
     )
 
-    # Country code ko default None rakha hai taaki crash na ho
+    # Default country code
     country_code = "US" 
     
     return driver, country_code
 
-# Agar ad_clicker 'create_webdriver' dhoond raha hai toh ye line help karegi
+def execute_stealth_js_code(driver):
+    """
+    Optional: Stealth scripts execute karne ke liye
+    """
+    try:
+        driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+    except Exception:
+        pass
+
+# ad_clicker.py is name se function call karta hai
 create_webdriver = create_seleniumbase_driver
 
     if config.webdriver.use_seleniumbase:
