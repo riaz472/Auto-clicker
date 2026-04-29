@@ -122,31 +122,39 @@ class CustomChrome(undetected_chromedriver.Chrome):
     import seleniumbase
 from typing import Optional
 
+import seleniumbase
+from typing import Optional
+
 def create_seleniumbase_driver(
-    proxy: str = None, 
-    user_agent: Optional[str] = None,
-    plugin_folder_name: Optional[str] = None  # Ab ye 3 arguments accept karega
+    proxy: Optional[str] = None, 
+    user_agent: Optional[str] = None, 
+    plugin_folder_name: Optional[str] = None  # Teesri argument ab fixed hai
 ) -> tuple:
-    """Create SeleniumBase Chrome webdriver instance"""
+    """
+    Create SeleniumBase Chrome webdriver instance.
+    Arguments accept kar liye hain taaki TypeError na aaye.
+    """
     
-    # Hum plugin_folder_name ko filhal use nahi kar rahe kyunki 
-    # SeleniumBase khud proxy handle kar leta hai, lekin error khatam karne ke liye 
-    # ise yahan likhna zaroori hai.
-    
+    # SeleniumBase automatically proxy aur agent handle karta hai
     driver = seleniumbase.Driver(
         browser="chrome",
-        uc=True,                
-        headless2=True,         
+        uc=True,                # Undetected mode
+        headless2=True,         # Actions ke liye headless mode
         proxy=proxy,            
         agent=user_agent,       
         no_sandbox=True,        
         disable_gpu=True,
         incognito=True,
+        undo_detools=True
     )
 
-    country_code = None 
+    # Country code ko default None rakha hai taaki crash na ho
+    country_code = "US" 
     
     return driver, country_code
+
+# Agar ad_clicker 'create_webdriver' dhoond raha hai toh ye line help karegi
+create_webdriver = create_seleniumbase_driver
 
     if config.webdriver.use_seleniumbase:
         logger.debug("Using SeleniumBase...")
