@@ -162,7 +162,7 @@ def execute_stealth_js_code(driver):
 # ad_clicker.py is name se function call karta hai
 create_webdriver = create_seleniumbase_driver
 
-    if config.webdriver.use_seleniumbase:
+  if config.webdriver.use_seleniumbase:
         logger.debug("Using SeleniumBase...")
         return create_seleniumbase_driver(proxy, user_agent)
 
