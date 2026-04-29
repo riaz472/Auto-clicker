@@ -226,19 +226,19 @@ def main():
             logger.info(f"Found {len(ads) + len(shopping_ads)} ads")
 
             if shopping_ads:
-         logger.info("Clicking shopping ads with delays...")
- for s_ad in shopping_ads:
-        time.sleep(random.randint(5, 12)) # 5 se 12 second ka random wait
-        search_controller.click_shopping_ads([s_ad])
+                logger.info("Clicking shopping ads with delays...")
+                for s_ad in shopping_ads:
+                    time.sleep(random.randint(5, 12)) # 5 se 12 second ka random wait
+                    search_controller.click_shopping_ads([s_ad])
 
-if all_links:
-    logger.info("Clicking main links with human-like pattern...")
-    for link in all_links:
-        # Har click se pehle 10 se 25 second ka lamba wait (Revenue ke liye zaroori hai)
-        wait_time = random.randint(10, 25)
-        logger.info(f"Waiting {wait_time}s before next click...")
-        time.sleep(wait_time)
-        search_controller.click_links([link])
+            if all_links:
+                logger.info("Clicking main links with human-like pattern...")
+                for link in all_links:
+                    # Har click se pehle 10 se 25 second ka lamba wait
+                    wait_time = random.randint(10, 25)
+                    logger.info(f"Waiting {wait_time}s before next click...")
+                    time.sleep(wait_time)
+                    search_controller.click_links([link])
 
             if config.behavior.hooks_enabled:
                 hooks.after_clicks_hook(driver)
@@ -250,7 +250,6 @@ if all_links:
 
     except Exception as exp:
         logger.error("Exception occurred. See the details in the log file.")
-
         if config.webdriver.ss_on_exception:
             take_screenshot(driver)
 
