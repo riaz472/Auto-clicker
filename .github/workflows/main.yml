@@ -29,6 +29,10 @@ jobs:
       - name: Install Python Requirements
         run: |
           pip install -r requirements.txt
+          - name: Force Install Latest Driver
+        run: |
+          pip install seleniumbase --upgrade
+          sbase install chromedriver latest
 
       - name: Run Bot with Virtual Display
         env:
