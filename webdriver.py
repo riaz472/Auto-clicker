@@ -119,21 +119,32 @@ class CustomChrome(undetected_chromedriver.Chrome):
             else:
                 sleep(0.05 * config.behavior.wait_factor)
 
+import seleniumbase
+from typing import Optional
 
-def create_webdriver(
-    proxy: str, user_agent: Optional[str] = None, plugin_folder_name: Optional[str] = None
-) -> tuple[undetected_chromedriver.Chrome, Optional[str]]:
-    """Create Selenium Chrome webdriver instance
+def create_seleniumbase_driver(
+    proxy: str = None, 
+    user_agent: Optional[str] = None,
+    plugin_folder_name: Optional[str] = None
+) -> tuple[seleniumbase.Driver, Optional[str]]:
+    """Create SeleniumBase Chrome webdriver instance"""
+    
+    # Ye settings GitHub Actions ke version mismatch ko khatam kar dengi
+    driver = seleniumbase.Driver(
+        browser="chrome",
+        uc=True,                # Undetected mode ON
+        headless2=True,         # Naya headless mode jo ads block nahi hone deta
+        proxy=proxy,            # Proxy handle karne ke liye
+        agent=user_agent,       # User agent change karne ke liye
+        no_sandbox=True,        # Linux environment ke liye zaroori
+        disable_gpu=True,
+        incognito=True,
+    )
 
-    :type proxy: str
-    :param proxy: Proxy to use in ip:port or user:pass@host:port format
-    :type user_agent: str
-    :param user_agent: User agent string
-    :type plugin_folder_name: str
-    :param plugin_folder_name: Plugin folder name for proxy
-    :rtype: tuple
-    :returns: (undetected_chromedriver.Chrome, country_code) pair
-    """
+    # Country code logic (Aapka purana logic agar hai toh yahan rehne dain)
+    country_code = None 
+    
+    return driver, country_code
 
     if config.webdriver.use_seleniumbase:
         logger.debug("Using SeleniumBase...")
