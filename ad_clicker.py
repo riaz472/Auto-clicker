@@ -21,7 +21,7 @@ from utils import (
 )
 from selenium_stealth import stealth
 import time
-from webdriver import create_webdriver
+from webdriver import create_seleniumbase_driver as create_webdriver
 
 
 if config.behavior.telegram_enabled:
