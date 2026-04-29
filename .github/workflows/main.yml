@@ -11,28 +11,27 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
       - name: Install System Dependencies
         run: |
           sudo apt-get update
-          # Chrome aur dependencies install karne ka behtar tareeka
-          sudo apt-get install -y xvfb x11-utils google-chrome-stable || true
-          # Package name fix for Ubuntu 24.04 (libasound2 vs libasound2t64)
+          sudo apt-get install -y xvfb x11-utils google-chrome-stable
           sudo apt-get install -y libnss3 libatk-bridge2.0-0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libasound2t64 || sudo apt-get install -y libasound2 || true
 
       - name: Install Python Requirements
         run: |
+          pip install --upgrade pip
           pip install -r requirements.txt
-          - name: Force Install Latest Driver
-        run: |
           pip install seleniumbase --upgrade
-          sbase install chromedriver latest
+
+      - name: Force Install Latest Driver
+        run: sbase install chromedriver latest
 
       - name: Run Bot with Virtual Display
         env:
