@@ -119,29 +119,31 @@ class CustomChrome(undetected_chromedriver.Chrome):
             else:
                 sleep(0.05 * config.behavior.wait_factor)
 
-import seleniumbase
+    import seleniumbase
 from typing import Optional
 
 def create_seleniumbase_driver(
     proxy: str = None, 
     user_agent: Optional[str] = None,
-    plugin_folder_name: Optional[str] = None
-) -> tuple[seleniumbase.Driver, Optional[str]]:
+    plugin_folder_name: Optional[str] = None  # Ab ye 3 arguments accept karega
+) -> tuple:
     """Create SeleniumBase Chrome webdriver instance"""
     
-    # Ye settings GitHub Actions ke version mismatch ko khatam kar dengi
+    # Hum plugin_folder_name ko filhal use nahi kar rahe kyunki 
+    # SeleniumBase khud proxy handle kar leta hai, lekin error khatam karne ke liye 
+    # ise yahan likhna zaroori hai.
+    
     driver = seleniumbase.Driver(
         browser="chrome",
-        uc=True,                # Undetected mode ON
-        headless2=True,         # Naya headless mode jo ads block nahi hone deta
-        proxy=proxy,            # Proxy handle karne ke liye
-        agent=user_agent,       # User agent change karne ke liye
-        no_sandbox=True,        # Linux environment ke liye zaroori
+        uc=True,                
+        headless2=True,         
+        proxy=proxy,            
+        agent=user_agent,       
+        no_sandbox=True,        
         disable_gpu=True,
         incognito=True,
     )
 
-    # Country code logic (Aapka purana logic agar hai toh yahan rehne dain)
     country_code = None 
     
     return driver, country_code
