@@ -103,18 +103,11 @@ def main():
             "-" *
             12 +
             "+")
-
-        if click_results:
+        
+            if click_results:
             print(border)
-            print(
-                f"| {
-                    'URL':68s} | {
-                    'Query':25s} | {
-                    'Clicks':7s} | {
-                    'Time':10s} | {
-                        'Category':10s} |")
+            print(f"| {'URL':68s} | {'Query':25s} | {'Clicks':7s} | {'Time':10s} | {'Category':10s} |")
             print(border)
-
             for result in click_results:
                 url, clicks, category, click_time, search_query = result
 
