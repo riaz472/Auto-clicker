@@ -226,8 +226,8 @@ def main():
             logger.info(f"Found {len(ads) + len(shopping_ads)} ads")
 
             if shopping_ads:
-    logger.info("Clicking shopping ads with delays...")
-    for s_ad in shopping_ads:
+         logger.info("Clicking shopping ads with delays...")
+ for s_ad in shopping_ads:
         time.sleep(random.randint(5, 12)) # 5 se 12 second ka random wait
         search_controller.click_shopping_ads([s_ad])
 
