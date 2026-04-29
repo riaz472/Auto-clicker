@@ -21,9 +21,10 @@ jobs:
       - name: Install System Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y xvfb x11-utils google-chrome-stable
-          # Additional dependencies for Chrome stability
-          sudo apt-get install -y libnss3 libatk-bridge2.0-0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libasound2
+          # Chrome aur dependencies install karne ka behtar tareeka
+          sudo apt-get install -y xvfb x11-utils google-chrome-stable || true
+          # Package name fix for Ubuntu 24.04 (libasound2 vs libasound2t64)
+          sudo apt-get install -y libnss3 libatk-bridge2.0-0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libasound2t64 || sudo apt-get install -y libasound2 || true
 
       - name: Install Python Requirements
         run: |
