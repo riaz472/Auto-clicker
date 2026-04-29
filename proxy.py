@@ -12,6 +12,7 @@ except ImportError:
 from config_reader import config
 from logger import logger
 
+
 def get_proxies() -> list[str]:
     """Get proxies from file safely"""
     filepath = Path(config.paths.proxy_file)
@@ -31,6 +32,7 @@ def get_proxies() -> list[str]:
     except Exception as e:
         logger.error(f"Error reading proxy file: {e}")
         return []
+
 
 def install_plugin(
     chrome_options: ChromeOptions,

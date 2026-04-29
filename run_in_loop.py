@@ -33,7 +33,8 @@ def _inside_running_interval() -> bool:
 
     if current_hour == start_time.hour and current_hour == end_time.hour:
         if end_time.minute - start_time.minute < 10:
-            raise SystemExit("There should be at least 10 minutes between the start and end!")
+            raise SystemExit(
+                "There should be at least 10 minutes between the start and end!")
 
     return start_time <= now <= end_time
 
@@ -51,7 +52,8 @@ def main() -> None:
 
         if not _inside_running_interval():
             start_time = config.behavior.running_interval_start
-            logger.info(f"Outside of the running interval. Waiting {start_time} to start...")
+            logger.info(
+                f"Outside of the running interval. Waiting {start_time} to start...")
             sleep(60)
             continue
 

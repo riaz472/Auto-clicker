@@ -19,7 +19,12 @@ class ClickLogsDB:
     def __init__(self) -> None:
         self._create_db_table()
 
-    def save_click(self, site_url: str, category: str, query: str, click_time: str) -> None:
+    def save_click(
+            self,
+            site_url: str,
+            category: str,
+            query: str,
+            click_time: str) -> None:
         """Save click_date, site_url, click_time, query, and category to database
 
         Raises RuntimeError if an error occurs during the save operation.
@@ -47,12 +52,14 @@ class ClickLogsDB:
                     (click_date, click_time, site_url, query, category),
                 )
                 log_details = f"{click_date} {click_time}, {site_url}, {query}, {category}"
-                logger.debug(f"Click log ({log_details}) was added to database.")
+                logger.debug(
+                    f"Click log ({log_details}) was added to database.")
 
         except sqlite3.Error as exp:
             raise RuntimeError(exp) from exp
 
-    def query_clicks(self, click_date: str) -> Optional[list[tuple[str, str, str]]]:
+    def query_clicks(
+            self, click_date: str) -> Optional[list[tuple[str, str, str]]]:
         """Query given date in database and return results grouped by the site_url
 
         :type click_date: str
@@ -76,7 +83,8 @@ class ClickLogsDB:
                 results = clicklogs_db_cursor.fetchall()
 
                 if not results:
-                    logger.debug(f"Couldn't found any click data for {click_date} in database!")
+                    logger.debug(
+                        f"Couldn't found any click data for {click_date} in database!")
                     return None
                 else:
                     return results
@@ -113,7 +121,8 @@ class ClickLogsDB:
 
         except sqlite3.Error as exp:
             logger.error(exp)
-            raise RuntimeError("Failed to connect to clicklogs database!") from exp
+            raise RuntimeError(
+                "Failed to connect to clicklogs database!") from exp
 
         finally:
             clicklogs_db.commit()

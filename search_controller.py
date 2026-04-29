@@ -75,9 +75,8 @@ class SearchController:
     LOC_CONTINUE_BUTTON = (By.TAG_NAME, "g-raised-button")
     NOT_NOW_BUTTON = (By.CSS_SELECTOR, "g-raised-button[data-ved]")
 
-    def __init__(
-        self, driver: selenium.webdriver, query: str, country_code: Optional[str] = None
-    ) -> None:
+    def __init__(self, driver: selenium.webdriver, query: str,
+                 country_code: Optional[str] = None) -> None:
         self._driver = driver
         self._search_query, self._filter_words = self._process_query(query)
         self._exclude_list = None
@@ -97,7 +96,8 @@ class SearchController:
         self._stats = SearchStats()
 
         if config.behavior.excludes:
-            self._exclude_list = [item.strip() for item in config.behavior.excludes.split(",")]
+            self._exclude_list = [item.strip()
+                                  for item in config.behavior.excludes.split(",")]
             logger.debug(f"Words to be excluded: {self._exclude_list}")
 
         if country_code:
@@ -145,14 +145,18 @@ class SearchController:
                 logger.debug("Waiting for search box to be ready...")
 
                 wait = WebDriverWait(self._driver, timeout=7)
-                searchbox_ready = wait.until(EC.element_to_be_clickable(self.SEARCH_INPUT))
+                searchbox_ready = wait.until(
+                    EC.element_to_be_clickable(
+                        self.SEARCH_INPUT))
 
                 if searchbox_ready:
                     logger.debug("Search box is ready...")
 
                     try:
-                        search_input_box = self._driver.find_element(*self.SEARCH_INPUT)
-                        self._type_humanlike(search_input_box, self._search_query)
+                        search_input_box = self._driver.find_element(
+                            *self.SEARCH_INPUT)
+                        self._type_humanlike(
+                            search_input_box, self._search_query)
                     except ElementNotInteractableException:
                         pass
 
@@ -188,7 +192,9 @@ class SearchController:
 
         try:
             wait = WebDriverWait(self._driver, timeout=5)
-            results_loaded = wait.until(EC.presence_of_element_located(self.RESULTS_CONTAINER))
+            results_loaded = wait.until(
+                EC.presence_of_element_located(
+                    self.RESULTS_CONTAINER))
 
             if results_loaded:
                 if self._hooks_enabled:
@@ -234,11 +240,15 @@ class SearchController:
                     hooks.before_ad_click_hook(self._driver)
 
                 if config.behavior.send_to_android and self._android_device_id:
-                    self._handle_android_click(ad_link_element, ad_link, True, category="Shopping")
+                    self._handle_android_click(
+                        ad_link_element, ad_link, True, category="Shopping")
                 else:
                     self._handle_browser_click(
-                        ad_link_element, ad_link, True, original_window_handle, category="Shopping"
-                    )
+                        ad_link_element,
+                        ad_link,
+                        True,
+                        original_window_handle,
+                        category="Shopping")
 
             except Exception:
                 logger.debug(f"Failed to click ad element [{ad_title}]!")
@@ -259,26 +269,38 @@ class SearchController:
             is_ad_element = isinstance(link, tuple)
 
             try:
-                link_element, link_url, ad_title = self._extract_link_info(link, is_ad_element)
+                link_element, link_url, ad_title = self._extract_link_info(
+                    link, is_ad_element)
 
                 if self._hooks_enabled and is_ad_element:
                     hooks.before_ad_click_hook(self._driver)
 
                 logger.info(
-                    f"Clicking to {'[' + ad_title + '](' + link_url + ')' if is_ad_element else '[' + link_url + ']'}..."
-                )
+                    f"Clicking to {
+                        '[' +
+                        ad_title +
+                        '](' +
+                        link_url +
+                        ')' if is_ad_element else '[' +
+                        link_url +
+                        ']'}...")
 
                 category = "Ad" if is_ad_element else "Non-ad"
 
                 if config.behavior.send_to_android and self._android_device_id:
-                    self._handle_android_click(link_element, link_url, is_ad_element, category)
+                    self._handle_android_click(
+                        link_element, link_url, is_ad_element, category)
                 else:
                     self._handle_browser_click(
-                        link_element, link_url, is_ad_element, original_window_handle, category
-                    )
+                        link_element,
+                        link_url,
+                        is_ad_element,
+                        original_window_handle,
+                        category)
 
                 # scroll the page to avoid elements remain outside of the view
-                self._driver.execute_script("arguments[0].scrollIntoView(true);", link_element)
+                self._driver.execute_script(
+                    "arguments[0].scrollIntoView(true);", link_element)
 
             except StaleElementReferenceException:
                 logger.debug(
@@ -287,7 +309,9 @@ class SearchController:
                 )
 
             except Exception:
-                logger.error(f"Failed to click on [{ad_title if is_ad_element else link_url}]!")
+                logger.error(
+                    f"Failed to click on [{
+                        ad_title if is_ad_element else link_url}]!")
 
     def _extract_link_info(self, link: Any, is_ad_element: bool) -> tuple:
         """Extract link information
@@ -330,7 +354,8 @@ class SearchController:
         :param category: Specifies link category as Ad, Non-ad, or Shopping
         """
 
-        url = link_url if category == "Shopping" else link_element.get_attribute("href")
+        url = link_url if category == "Shopping" else link_element.get_attribute(
+            "href")
 
         url = resolve_redirect(url)
 
@@ -359,8 +384,11 @@ class SearchController:
         if config.behavior.request_boost:
             boost_requests(url)
 
-        wait_time = self._get_wait_time(is_ad_element) * config.behavior.wait_factor
-        logger.debug(f"Waiting {wait_time} seconds on {category.lower()} page...")
+        wait_time = self._get_wait_time(
+            is_ad_element) * config.behavior.wait_factor
+        logger.debug(
+            f"Waiting {wait_time} seconds on {
+                category.lower()} page...")
         sleep(wait_time)
 
         adb_controller.close_browser()
@@ -392,7 +420,8 @@ class SearchController:
 
         if len(self._driver.window_handles) != 2:
             logger.debug("Couldn't click! Scrolling element into view...")
-            self._driver.execute_script("arguments[0].scrollIntoView(true);", link_element)
+            self._driver.execute_script(
+                "arguments[0].scrollIntoView(true);", link_element)
             self._open_link_in_new_tab(link_element)
 
         if len(self._driver.window_handles) != 2:
@@ -407,7 +436,9 @@ class SearchController:
                 click_time = datetime.now().strftime("%H:%M:%S")
 
                 sleep(get_random_sleep(3, 5) * config.behavior.wait_factor)
-                logger.debug(f"Current url on new tab: {self._driver.current_url}")
+                logger.debug(
+                    f"Current url on new tab: {
+                        self._driver.current_url}")
 
                 if self._hooks_enabled and category in ("Ad", "Shopping"):
                     hooks.after_ad_click_hook(self._driver)
@@ -425,8 +456,11 @@ class SearchController:
                 if config.behavior.request_boost:
                     boost_requests(self._driver.current_url)
 
-                wait_time = self._get_wait_time(is_ad_element) * config.behavior.wait_factor
-                logger.debug(f"Waiting {wait_time} seconds on {category.lower()} page...")
+                wait_time = self._get_wait_time(
+                    is_ad_element) * config.behavior.wait_factor
+                logger.debug(
+                    f"Waiting {wait_time} seconds on {
+                        category.lower()} page...")
                 sleep(wait_time)
 
                 self._driver.close()
@@ -446,7 +480,8 @@ class SearchController:
         """
 
         platform = sys.platform
-        control_command_key = Keys.COMMAND if platform.endswith("darwin") else Keys.CONTROL
+        control_command_key = Keys.COMMAND if platform.endswith(
+            "darwin") else Keys.CONTROL
 
         try:
             actions = ActionChains(self._driver)
@@ -463,9 +498,8 @@ class SearchController:
 
             if "has no size and location" in error_message:
                 logger.error(
-                    f"Failed to click element[{link_element.get_attribute('outerHTML')}]! "
-                    "Skipping..."
-                )
+                    f"Failed to click element[{
+                        link_element.get_attribute('outerHTML')}]! " "Skipping...")
 
     def _get_wait_time(self, is_ad_element: bool) -> int:
         """Get wait time based on whether the link is an ad or non-ad
@@ -477,11 +511,21 @@ class SearchController:
         """
 
         if is_ad_element:
-            return random.choice(range(self._ad_page_min_wait, self._ad_page_max_wait))
+            return random.choice(
+                range(
+                    self._ad_page_min_wait,
+                    self._ad_page_max_wait))
         else:
-            return random.choice(range(self._nonad_page_min_wait, self._nonad_page_max_wait))
+            return random.choice(
+                range(
+                    self._nonad_page_min_wait,
+                    self._nonad_page_max_wait))
 
-    def _update_click_stats(self, url: str, click_time: str, category: str) -> None:
+    def _update_click_stats(
+            self,
+            url: str,
+            click_time: str,
+            category: str) -> None:
         """Update click statistics
 
         :type url: str
@@ -500,17 +544,18 @@ class SearchController:
             self._stats.shopping_ads_clicked += 1
 
         self._clicklogs_db_client.save_click(
-            site_url=url, category=category, query=self._search_query, click_time=click_time
-        )
+            site_url=url,
+            category=category,
+            query=self._search_query,
+            click_time=click_time)
 
     def _start_random_scroll_thread(self) -> None:
         """Start a thread for random swipes on Android device"""
 
         random_scroll_thread = Thread(target=self._make_random_swipes)
         random_scroll_thread.start()
-        random_scroll_thread.join(
-            timeout=float(max(self._ad_page_max_wait, self._nonad_page_max_wait))
-        )
+        random_scroll_thread.join(timeout=float(
+            max(self._ad_page_max_wait, self._nonad_page_max_wait)))
 
     def _start_random_action_threads(self) -> None:
         """Start threads for random actions on browser"""
@@ -519,12 +564,10 @@ class SearchController:
         random_scroll_thread.start()
         random_mouse_thread = Thread(target=self._make_random_mouse_movements)
         random_mouse_thread.start()
-        random_scroll_thread.join(
-            timeout=float(max(self._ad_page_max_wait, self._nonad_page_max_wait))
-        )
-        random_mouse_thread.join(
-            timeout=float(max(self._ad_page_max_wait, self._nonad_page_max_wait))
-        )
+        random_scroll_thread.join(timeout=float(
+            max(self._ad_page_max_wait, self._nonad_page_max_wait)))
+        random_mouse_thread.join(timeout=float(
+            max(self._ad_page_max_wait, self._nonad_page_max_wait)))
 
     def end_search(self) -> None:
         """Close the browser.
@@ -584,16 +627,21 @@ class SearchController:
                     ads.append(ad_fields)
 
             else:
-                commercial_unit_container = self._driver.find_element(By.CLASS_NAME, "cu-container")
-                shopping_ads = commercial_unit_container.find_elements(By.CLASS_NAME, "pla-unit")
+                commercial_unit_container = self._driver.find_element(
+                    By.CLASS_NAME, "cu-container")
+                shopping_ads = commercial_unit_container.find_elements(
+                    By.CLASS_NAME, "pla-unit")
 
                 for shopping_ad in shopping_ads[:5]:
                     ad = shopping_ad.find_element(By.TAG_NAME, "a")
                     shopping_ad_link = ad.get_attribute("href")
 
-                    ad_data_element = shopping_ad.find_element(By.CSS_SELECTOR, "a:nth-child(2)")
-                    shopping_ad_title = ad_data_element.get_attribute("aria-label")
-                    shopping_ad_target_link = ad_data_element.get_attribute("href")
+                    ad_data_element = shopping_ad.find_element(
+                        By.CSS_SELECTOR, "a:nth-child(2)")
+                    shopping_ad_title = ad_data_element.get_attribute(
+                        "aria-label")
+                    shopping_ad_target_link = ad_data_element.get_attribute(
+                        "href")
 
                     ad_fields = (
                         shopping_ad,
@@ -621,7 +669,8 @@ class SearchController:
                     for word in self._filter_words:
                         if word in ad_link or word in ad_title.lower():
                             if ad not in filtered_ads:
-                                logger.debug(f"Filtering [{ad_title}]: {ad_link}")
+                                logger.debug(
+                                    f"Filtering [{ad_title}]: {ad_link}")
                                 self._stats.num_filtered_shopping_ads += 1
                                 filtered_ads.append(ad)
             else:
@@ -641,7 +690,8 @@ class SearchController:
                             exclude_item in ad_target_link
                             or exclude_item.lower() in ad_title.lower()
                         ):
-                            logger.debug(f"Excluding [{ad_title}]: {ad_target_link}")
+                            logger.debug(
+                                f"Excluding [{ad_title}]: {ad_target_link}")
                             self._stats.num_excluded_shopping_ads += 1
                             break
                     else:
@@ -675,7 +725,8 @@ class SearchController:
 
         while not self._is_scroll_at_the_end():
             try:
-                top_ads_containers = self._driver.find_elements(*self.TOP_ADS_CONTAINER)
+                top_ads_containers = self._driver.find_elements(
+                    *self.TOP_ADS_CONTAINER)
                 for ad_container in top_ads_containers:
                     ads.extend(ad_container.find_elements(*self.AD_RESULTS))
 
@@ -683,7 +734,8 @@ class SearchController:
                 logger.debug("Could not found top ads!")
 
             try:
-                bottom_ads_containers = self._driver.find_elements(*self.BOTTOM_ADS_CONTAINER)
+                bottom_ads_containers = self._driver.find_elements(
+                    *self.BOTTOM_ADS_CONTAINER)
                 for ad_container in bottom_ads_containers:
                     ads.extend(ad_container.find_elements(*self.AD_RESULTS))
 
@@ -692,10 +744,13 @@ class SearchController:
 
             if self._max_scroll_limit > 0:
                 if scroll_count == self._max_scroll_limit:
-                    logger.debug("Reached to max scroll limit! Ending scroll...")
+                    logger.debug(
+                        "Reached to max scroll limit! Ending scroll...")
                     break
 
-            self._driver.find_element(By.TAG_NAME, "body").send_keys(Keys.PAGE_DOWN)
+            self._driver.find_element(
+                By.TAG_NAME, "body").send_keys(
+                Keys.PAGE_DOWN)
             sleep(get_random_sleep(2, 2.5) * config.behavior.wait_factor)
 
             scroll_count += 1
@@ -814,11 +869,13 @@ class SearchController:
                     and len(link.find_elements(By.TAG_NAME, "svg")) == 0
                 ):
                     if non_ad_domains:
-                        logger.debug(f"Evaluating [{link_url}] to add as non-ad link...")
+                        logger.debug(
+                            f"Evaluating [{link_url}] to add as non-ad link...")
 
                         for domain in non_ad_domains:
                             if domain in link_url:
-                                logger.debug(f"Adding [{link_url}] to non-ad links")
+                                logger.debug(
+                                    f"Adding [{link_url}] to non-ad links")
                                 non_ad_links.append(link)
                                 break
                     else:
@@ -849,9 +906,11 @@ class SearchController:
 
         for link in all_links:
             if "policies.google.com" in link:
-                buttons = self._driver.find_elements(*self.COOKIE_DIALOG_BUTTON)[6:-2]
+                buttons = self._driver.find_elements(
+                    *self.COOKIE_DIALOG_BUTTON)[6:-2]
                 if len(buttons) < 6:
-                    buttons = self._driver.find_elements(*self.COOKIE_DIALOG_BUTTON)
+                    buttons = self._driver.find_elements(
+                        *self.COOKIE_DIALOG_BUTTON)
 
                 for button in buttons:
                     try:
@@ -859,18 +918,24 @@ class SearchController:
                             button.get_attribute("role") != "link"
                             and button.get_attribute("style") != "display:none"
                         ):
-                            logger.debug(f"Clicking button {button.get_attribute('outerHTML')}")
+                            logger.debug(
+                                f"Clicking button {
+                                    button.get_attribute('outerHTML')}")
                             self._driver.execute_script(
                                 "arguments[0].scrollIntoView(true);", button
                             )
-                            sleep(get_random_sleep(0.5, 1) * config.behavior.wait_factor)
+                            sleep(get_random_sleep(0.5, 1) *
+                                  config.behavior.wait_factor)
                             button.click()
-                            sleep(get_random_sleep(1, 1.5) * config.behavior.wait_factor)
+                            sleep(get_random_sleep(1, 1.5) *
+                                  config.behavior.wait_factor)
 
                             try:
-                                search_input_box = self._driver.find_element(*self.SEARCH_INPUT)
+                                search_input_box = self._driver.find_element(
+                                    *self.SEARCH_INPUT)
                                 if not search_input_box.get_attribute("value"):
-                                    self._type_humanlike(search_input_box, self._search_query)
+                                    self._type_humanlike(
+                                        search_input_box, self._search_query)
                                     break
                             except (
                                 ElementNotInteractableException,
@@ -897,7 +962,8 @@ class SearchController:
         :returns: Whether the scrollbar was reached to end or not
         """
 
-        page_height = self._driver.execute_script("return document.body.scrollHeight;")
+        page_height = self._driver.execute_script(
+            "return document.body.scrollHeight;")
         total_scrolled_height = self._driver.execute_script(
             "return window.pageYOffset + window.innerHeight;"
         )
@@ -919,7 +985,8 @@ class SearchController:
 
         except Exception as exp:
             if "not connected to DevTools" in str(exp):
-                logger.debug("Incognito mode is active. No need to delete cache. Skipping...")
+                logger.debug(
+                    "Incognito mode is active. No need to delete cache. Skipping...")
 
     def _set_start_url(self, country_code: str) -> None:
         """Set start url according to country code of the proxy IP
@@ -942,17 +1009,22 @@ class SearchController:
         logger.debug("Making random scrolls...")
 
         directions = [Direction.DOWN]
-        directions += random.choices(
-            [Direction.UP] * 5 + [Direction.DOWN] * 5, k=random.choice(range(1, 5))
-        )
+        directions += random.choices([Direction.UP] *
+                                     5 +
+                                     [Direction.DOWN] *
+                                     5, k=random.choice(range(1, 5)))
 
         logger.debug(f"Direction choices: {[d.value for d in directions]}")
 
         for direction in directions:
             if direction == Direction.DOWN and not self._is_scroll_at_the_end():
-                self._driver.find_element(By.TAG_NAME, "body").send_keys(Keys.PAGE_DOWN)
+                self._driver.find_element(
+                    By.TAG_NAME, "body").send_keys(
+                    Keys.PAGE_DOWN)
             elif direction == Direction.UP:
-                self._driver.find_element(By.TAG_NAME, "body").send_keys(Keys.PAGE_UP)
+                self._driver.find_element(
+                    By.TAG_NAME, "body").send_keys(
+                    Keys.PAGE_UP)
 
             sleep(get_random_sleep(1, 3) * config.behavior.wait_factor)
 
@@ -964,9 +1036,10 @@ class SearchController:
         logger.debug("Making random swipes...")
 
         directions = [Direction.DOWN, Direction.DOWN]
-        directions += random.choices(
-            [Direction.UP] * 5 + [Direction.DOWN] * 5, k=random.choice(range(1, 5))
-        )
+        directions += random.choices([Direction.UP] *
+                                     5 +
+                                     [Direction.DOWN] *
+                                     5, k=random.choice(range(1, 5)))
 
         logger.debug(f"Direction choices: {[d.value for d in directions]}")
 
@@ -980,7 +1053,8 @@ class SearchController:
             sleep(get_random_sleep(1, 2) * config.behavior.wait_factor)
 
         HOME_KEYCODE = 122
-        adb_controller.send_keyevent(HOME_KEYCODE)  # go to top by sending Home key
+        # go to top by sending Home key
+        adb_controller.send_keyevent(HOME_KEYCODE)
 
     def _send_swipe(self, direction: Direction) -> None:
         """Send swipe action to mobile device
@@ -1018,7 +1092,9 @@ class SearchController:
                 logger.debug("Making random mouse movements...")
 
                 screen_width, screen_height = pyautogui.size()
-                pyautogui.moveTo(screen_width / 2 - 300, screen_height / 2 - 200)
+                pyautogui.moveTo(
+                    screen_width / 2 - 300,
+                    screen_height / 2 - 200)
 
                 logger.debug(pyautogui.position())
 
@@ -1046,17 +1122,33 @@ class SearchController:
                     logger.debug(f"Going {direction.value}...")
 
                     if direction == Direction.LEFT:
-                        pyautogui.move(-(random.choice(range(100, 200))), 0, 0.5, ease_method)
+                        pyautogui.move(-(random.choice(range(100, 200))),
+                                       0, 0.5, ease_method)
 
                     elif direction == Direction.RIGHT:
-                        pyautogui.move(random.choice(range(200, 400)), 0, 0.3, ease_method)
+                        pyautogui.move(
+                            random.choice(
+                                range(
+                                    200,
+                                    400)),
+                            0,
+                            0.3,
+                            ease_method)
 
                     elif direction == Direction.UP:
-                        pyautogui.move(0, -(random.choice(range(100, 200))), 1, ease_method)
+                        pyautogui.move(
+                            0, -(random.choice(range(100, 200))), 1, ease_method)
                         pyautogui.scroll(random.choice(range(1, 7)))
 
                     elif direction == Direction.DOWN:
-                        pyautogui.move(0, random.choice(range(150, 300)), 0.7, ease_method)
+                        pyautogui.move(
+                            0,
+                            random.choice(
+                                range(
+                                    150,
+                                    300)),
+                            0.7,
+                            ease_method)
                         pyautogui.scroll(-random.choice(range(1, 7)))
 
                     else:
@@ -1070,7 +1162,8 @@ class SearchController:
                     logger.debug(pyautogui.position())
 
             except pyautogui.FailSafeException:
-                logger.debug("The mouse cursor was moved to one of the screen corners!")
+                logger.debug(
+                    "The mouse cursor was moved to one of the screen corners!")
 
                 pyautogui.FAILSAFE = False
 
@@ -1094,7 +1187,8 @@ class SearchController:
                 self._stats.captcha_seen = True
 
                 if not self._twocaptcha_apikey:
-                    logger.info("Please try with a different proxy or enable 2captcha service.")
+                    logger.info(
+                        "Please try with a different proxy or enable 2captcha service.")
                     logger.info(self.stats)
                     raise SystemExit()
 
@@ -1127,7 +1221,8 @@ class SearchController:
                     )
                     self._driver.get(captcha_redirect_url)
 
-                    sleep(get_random_sleep(2, 2.5) * config.behavior.wait_factor)
+                    sleep(get_random_sleep(2, 2.5) *
+                          config.behavior.wait_factor)
 
                 else:
                     logger.info("Please try with a different proxy.")
@@ -1143,7 +1238,8 @@ class SearchController:
         """Close 'Choose location for search results' popup"""
 
         try:
-            estimated_loc_img = self._driver.find_element(*self.ESTIMATED_LOC_IMG)
+            estimated_loc_img = self._driver.find_element(
+                *self.ESTIMATED_LOC_IMG)
             logger.debug(estimated_loc_img.get_attribute("outerHTML"))
 
             logger.debug("Closing location choose dialog...")
@@ -1151,7 +1247,8 @@ class SearchController:
 
             sleep(get_random_sleep(1, 1.5) * config.behavior.wait_factor)
 
-            continue_button = self._driver.find_element(*self.LOC_CONTINUE_BUTTON)
+            continue_button = self._driver.find_element(
+                *self.LOC_CONTINUE_BUTTON)
             logger.debug(continue_button.get_attribute("outerHTML"))
 
             continue_button.click()
@@ -1164,9 +1261,11 @@ class SearchController:
 
             try:
                 logger.debug("Checking alternative location dialog...")
-                logger.debug("Closing location choose dialog by selecting Not now...")
+                logger.debug(
+                    "Closing location choose dialog by selecting Not now...")
 
-                not_now_button = self._driver.find_element(*self.NOT_NOW_BUTTON)
+                not_now_button = self._driver.find_element(
+                    *self.NOT_NOW_BUTTON)
                 logger.debug(not_now_button.get_attribute("outerHTML"))
 
                 not_now_button.click()
@@ -1174,18 +1273,24 @@ class SearchController:
                 sleep(get_random_sleep(0.2, 0.5) * config.behavior.wait_factor)
 
             except NoSuchElementException:
-                logger.debug("No location choose dialog seen. Continue to search...")
+                logger.debug(
+                    "No location choose dialog seen. Continue to search...")
 
             except ElementNotInteractableException:
-                logger.debug("Location dialog button element is not interactable!")
+                logger.debug(
+                    "Location dialog button element is not interactable!")
 
         finally:
-            # if no not now or continue button exists, send ESC to page to close the dialog
-            self._driver.find_element(By.TAG_NAME, "body").send_keys(Keys.ESCAPE)
+            # if no not now or continue button exists, send ESC to page to
+            # close the dialog
+            self._driver.find_element(
+                By.TAG_NAME, "body").send_keys(
+                Keys.ESCAPE)
 
     def _type_humanlike(
-        self, element: selenium.webdriver.remote.webelement.WebElement, text: str
-    ) -> None:
+            self,
+            element: selenium.webdriver.remote.webelement.WebElement,
+            text: str) -> None:
         """Type text slowly like a human
 
         :type element: selenium.webdriver.remote.webelement.WebElement
@@ -1199,7 +1304,11 @@ class SearchController:
 
             for character in text:
                 element.send_keys(character)
-                sleep(get_random_sleep(0.05, 0.15) * config.behavior.wait_factor)
+                sleep(
+                    get_random_sleep(
+                        0.05,
+                        0.15) *
+                    config.behavior.wait_factor)
 
             element.send_keys(Keys.ENTER)
 
@@ -1222,7 +1331,9 @@ class SearchController:
         :param device_id: Android device ID to assign
         """
 
-        logger.info(f"Assigning device[{device_id}] to browser {self._stats.browser_id}")
+        logger.info(
+            f"Assigning device[{device_id}] to browser {
+                self._stats.browser_id}")
 
         self._android_device_id = device_id
 
@@ -1247,7 +1358,8 @@ class SearchController:
         filter_words = []
 
         if "@" in query:
-            filter_words = [word.strip().lower() for word in query.split("@")[1].split("#")]
+            filter_words = [word.strip().lower()
+                            for word in query.split("@")[1].split("#")]
 
         if filter_words:
             logger.debug(f"Filter words: {filter_words}")

@@ -47,7 +47,9 @@ def captcha_seen_hook(driver: undetected_chromedriver.Chrome) -> None:
         logger.error(exp)
 
 
-def after_query_sent_hook(driver: undetected_chromedriver.Chrome, search_query: str) -> None:
+def after_query_sent_hook(
+        driver: undetected_chromedriver.Chrome,
+        search_query: str) -> None:
     """Hook to be called after submitting the search query
 
     At this point, cookie dialogs are closed, captchas are solved, and search

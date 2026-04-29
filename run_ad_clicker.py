@@ -16,8 +16,11 @@ from utils import get_queries
 
 
 def start_tool(
-    browser_id: int, query: str, proxy: str, start_timeout: float, device_id: Optional[str] = None
-) -> None:
+        browser_id: int,
+        query: str,
+        proxy: str,
+        start_timeout: float,
+        device_id: Optional[str] = None) -> None:
     """Start the tool
 
     :type browser_id: int
@@ -66,14 +69,16 @@ def main() -> None:
         if config.behavior.multiprocess_style == 1:
             random.shuffle(queries)
 
-        query = cycle(queries) if len(queries) <= MAX_WORKERS else iter(queries)
+        query = cycle(queries) if len(
+            queries) <= MAX_WORKERS else iter(queries)
     else:
         raise SystemExit("Missing query_file parameter!")
 
     if config.paths.proxy_file:
         proxies = get_proxies()
         random.shuffle(proxies)
-        proxy = cycle(proxies) if len(proxies) <= MAX_WORKERS else iter(proxies)
+        proxy = cycle(proxies) if len(
+            proxies) <= MAX_WORKERS else iter(proxies)
     else:
         raise SystemExit("Missing proxy_file parameter!")
 
@@ -85,7 +90,9 @@ def main() -> None:
     else:
         device_ids = [None] * MAX_WORKERS
 
-    logger.info(f"Running with {MAX_WORKERS} browser{'s' if MAX_WORKERS > 1 else ''}...")
+    logger.info(
+        f"Running with {MAX_WORKERS} browser{
+            's' if MAX_WORKERS > 1 else ''}...")
 
     # 1st way - different query on each browser (default)
     if config.behavior.multiprocess_style == 1:
@@ -149,4 +156,6 @@ if __name__ == "__main__":
         details = traceback.format_tb(exp.__traceback__)
         logger.debug(f"Exception details: \n{''.join(details)}")
 
-        logger.debug(f"Exception cause: {exp.__cause__}") if exp.__cause__ else None
+        logger.debug(
+            f"Exception cause: {
+                exp.__cause__}") if exp.__cause__ else None

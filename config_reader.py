@@ -68,7 +68,8 @@ class ConfigReader:
             try:
                 config = json.loads(config_file.read())
             except Exception:
-                logger.error("Failed to read config file. Check format and try again.")
+                logger.error(
+                    "Failed to read config file. Check format and try again.")
                 raise SystemExit()
 
         self.paths = PathParams(
@@ -79,7 +80,8 @@ class ConfigReader:
         )
 
         if self.paths.proxy_file and config["webdriver"]["proxy"]:
-            logger.error("Either 'proxy_file' or 'proxy' parameter should be empty.")
+            logger.error(
+                "Either 'proxy_file' or 'proxy' parameter should be empty.")
             raise SystemExit()
 
         self.webdriver = WebdriverParams(
@@ -95,7 +97,8 @@ class ConfigReader:
         )
 
         if self.paths.query_file and config["behavior"]["query"]:
-            logger.error("Either 'query_file' or 'query' parameter should be empty.")
+            logger.error(
+                "Either 'query_file' or 'query' parameter should be empty.")
             raise SystemExit()
 
         browser_count = config["behavior"]["browser_count"]

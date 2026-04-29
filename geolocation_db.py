@@ -39,8 +39,7 @@ class GeolocationDB:
         try:
             with self._geolocation_db() as geolocation_db_cursor:
                 geolocation_db_cursor.execute(
-                    "SELECT ip_address FROM geolocation WHERE ip_address=?", (ip_address,)
-                )
+                    "SELECT ip_address FROM geolocation WHERE ip_address=?", (ip_address,))
 
                 found = geolocation_db_cursor.fetchone()
 
@@ -61,7 +60,8 @@ class GeolocationDB:
         except sqlite3.Error as exp:
             raise RuntimeError(exp) from exp
 
-    def query_geolocation(self, ip_address: str) -> Optional[tuple[str, str, str]]:
+    def query_geolocation(
+            self, ip_address: str) -> Optional[tuple[str, str, str]]:
         """Query given IP address in database and return latitude and longitude if exists
 
         :type ip_address: str
@@ -115,7 +115,8 @@ class GeolocationDB:
 
         except sqlite3.Error as exp:
             logger.error(exp)
-            raise RuntimeError("Failed to connect to geolocation database!") from exp
+            raise RuntimeError(
+                "Failed to connect to geolocation database!") from exp
 
         finally:
             geolocation_db.commit()

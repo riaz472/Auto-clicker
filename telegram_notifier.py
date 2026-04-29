@@ -60,7 +60,10 @@ async def send_message(chat_id: str, message: str) -> None:
         await bot.send_message(chat_id=chat_id, text=message, parse_mode=ParseMode.HTML)
 
 
-def notify_matching_ads(query: str, links: list, stats: Optional[SearchStats] = None) -> None:
+def notify_matching_ads(
+        query: str,
+        links: list,
+        stats: Optional[SearchStats] = None) -> None:
     """Notify matching ads via Telegram
 
     :type query: str
@@ -94,11 +97,18 @@ def notify_matching_ads(query: str, links: list, stats: Optional[SearchStats] = 
         link_url = link[1]
         original_ad_title = link[2].replace("\n", " ")
 
-        ad_title = original_ad_title.replace("<", "&lt;").replace(">", "&gt;").replace("&", "&amp;")
+        ad_title = original_ad_title.replace(
+            "<",
+            "&lt;").replace(
+            ">",
+            "&gt;").replace(
+            "&",
+            "&amp;")
 
         message += f"<b>Ad Title:</b> {ad_title}\n"
 
-        logger.debug(f"Notification was added for [{original_ad_title}]({link_url})")
+        logger.debug(
+            f"Notification was added for [{original_ad_title}]({link_url})")
 
     try:
         logger.info("Sending Telegram notification...")

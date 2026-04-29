@@ -21,9 +21,12 @@ file_handler.setLevel(logging.DEBUG)
 # Create formatters and add it to handlers
 console_log_format = "%(asctime)s [%(levelname)5s] %(lineno)3d: %(message)s"
 file_log_format = "%(asctime)s [%(levelname)5s] %(filename)s:%(lineno)3d: %(message)s"
-console_formatter = logging.Formatter(console_log_format, datefmt="%d-%m-%Y %H:%M:%S")
+console_formatter = logging.Formatter(
+    console_log_format,
+    datefmt="%d-%m-%Y %H:%M:%S")
 console_handler.setFormatter(console_formatter)
-file_formatter = logging.Formatter(file_log_format, datefmt="%d-%m-%Y %H:%M:%S")
+file_formatter = logging.Formatter(
+    file_log_format, datefmt="%d-%m-%Y %H:%M:%S")
 file_handler.setFormatter(file_formatter)
 
 # Add handlers to the logger
@@ -71,9 +74,11 @@ def update_log_formats(browser_id: str) -> None:
     file_log_format = (
         "%(asctime)s <<%(browser_id)s>> [%(levelname)5s] %(filename)s:%(lineno)3d: %(message)s"
     )
-    console_formatter = logging.Formatter(console_log_format, datefmt="%d-%m-%Y %H:%M:%S")
+    console_formatter = logging.Formatter(
+        console_log_format, datefmt="%d-%m-%Y %H:%M:%S")
     console_handler.setFormatter(console_formatter)
-    file_formatter = logging.Formatter(file_log_format, datefmt="%d-%m-%Y %H:%M:%S")
+    file_formatter = logging.Formatter(
+        file_log_format, datefmt="%d-%m-%Y %H:%M:%S")
     file_handler.setFormatter(file_formatter)
 
     console_handler.addFilter(MultiprocessLogFilter(browser_id))

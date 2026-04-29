@@ -47,17 +47,28 @@ def get_arg_parser() -> ArgumentParser:
     )
     arg_parser.add_argument("--id", help="Browser id for multiprocess run")
     arg_parser.add_argument(
-        "--enable_telegram", action="store_true", help="Enable telegram notifications"
-    )
+        "--enable_telegram",
+        action="store_true",
+        help="Enable telegram notifications")
     arg_parser.add_argument(
-        "--report_clicks", action="store_true", help="Get click report for the given date"
-    )
-    arg_parser.add_argument("--date", help="Give a specific report date in DD-MM-YYYY format")
-    arg_parser.add_argument("--excel", action="store_true", help="Write results to an Excel file")
+        "--report_clicks",
+        action="store_true",
+        help="Get click report for the given date")
     arg_parser.add_argument(
-        "--check_stealth", action="store_true", help="Check stealth for undetection"
-    )
-    arg_parser.add_argument("-d", "--device_id", help="Android device ID for assigning to browser")
+        "--date",
+        help="Give a specific report date in DD-MM-YYYY format")
+    arg_parser.add_argument(
+        "--excel",
+        action="store_true",
+        help="Write results to an Excel file")
+    arg_parser.add_argument(
+        "--check_stealth",
+        action="store_true",
+        help="Check stealth for undetection")
+    arg_parser.add_argument(
+        "-d",
+        "--device_id",
+        help="Android device ID for assigning to browser")
 
     return arg_parser
 
@@ -72,17 +83,36 @@ def main():
         report_date = datetime.now().strftime("%d-%m-%Y") if not args.date else args.date
 
         clicklogs_db_client = ClickLogsDB()
-        click_results = clicklogs_db_client.query_clicks(click_date=report_date)
+        click_results = clicklogs_db_client.query_clicks(
+            click_date=report_date)
 
         border = (
-            "+" + "-" * 70 + "+" + "-" * 27 + "+" + "-" * 9 + "+" + "-" * 12 + "+" + "-" * 12 + "+"
-        )
+            "+" +
+            "-" *
+            70 +
+            "+" +
+            "-" *
+            27 +
+            "+" +
+            "-" *
+            9 +
+            "+" +
+            "-" *
+            12 +
+            "+" +
+            "-" *
+            12 +
+            "+")
 
         if click_results:
             print(border)
             print(
-                f"| {'URL':68s} | {'Query':25s} | {'Clicks':7s} | {'Time':10s} | {'Category':10s} |"
-            )
+                f"| {
+                    'URL':68s} | {
+                    'Query':25s} | {
+                    'Clicks':7s} | {
+                    'Time':10s} | {
+                        'Category':10s} |")
             print(border)
 
             for result in click_results:
@@ -92,8 +122,12 @@ def main():
                     url = url[:65] + "..."
 
                 print(
-                    f"| {url:68s} | {search_query:25s} | {str(clicks):7s} | {click_time:10s} | {category:10s} |"
-                )
+                    f"| {
+                        url:68s} | {
+                        search_query:25s} | {
+                        str(clicks):7s} | {
+                        click_time:10s} | {
+                        category:10s} |")
 
                 print(border)
 
@@ -111,7 +145,8 @@ def main():
             start_bot()
             return
         else:
-            logger.info("Please set the telegram_enabled option to true in config and try again.")
+            logger.info(
+                "Please set the telegram_enabled option to true in config and try again.")
             return
 
     if args.id:
@@ -131,11 +166,12 @@ def main():
         proxy = args.proxy
     elif config.paths.proxy_file:
         proxies = get_proxies()
-        if proxies: # Check agar list khali nahi hai
+        if proxies:  # Check agar list khali nahi hai
             proxy = random.choice(proxies)
             logger.info(f"Using proxy: {proxy}")
         else:
-            logger.warning("No proxies found in file. Proceeding without proxy.")
+            logger.warning(
+                "No proxies found in file. Proceeding without proxy.")
             proxy = None
     elif config.webdriver.proxy:
         proxy = config.webdriver.proxy
@@ -146,15 +182,16 @@ def main():
 
     plugin_folder_name = "".join(random.choices(string.ascii_lowercase, k=5))
 
-    driver, country_code = create_webdriver(proxy, user_agent, plugin_folder_name)
+    driver, country_code = create_webdriver(
+        proxy, user_agent, plugin_folder_name)
     stealth(driver,
-        languages=["en-US", "en"],
-        vendor="Google Inc.",
-        platform="Win32",
-        webgl_vendor="Intel Inc.",
-        renderer="Intel Iris OpenGL Engine",
-        fix_hairline=True,
-        )
+            languages=["en-US", "en"],
+            vendor="Google Inc.",
+            platform="Win32",
+            webgl_vendor="Intel Inc.",
+            renderer="Intel Iris OpenGL Engine",
+            fix_hairline=True,
+            )
 
     if args.check_stealth:
         from time import sleep
@@ -189,7 +226,8 @@ def main():
         if args.device_id:
             search_controller.assign_android_device(args.device_id)
 
-        ads, non_ad_links, shopping_ads = search_controller.search_for_ads(non_ad_domains=domains)
+        ads, non_ad_links, shopping_ads = search_controller.search_for_ads(
+            non_ad_domains=domains)
 
         if config.behavior.hooks_enabled:
             hooks.after_search_hook(driver)
@@ -198,9 +236,12 @@ def main():
             logger.info("No ads found in the search results!")
 
             if config.behavior.telegram_enabled:
-                notify_matching_ads(query, links=None, stats=search_controller.stats)
+                notify_matching_ads(
+                    query, links=None, stats=search_controller.stats)
         else:
-            logger.debug(f"Selected click order: {config.behavior.click_order}")
+            logger.debug(
+                f"Selected click order: {
+                    config.behavior.click_order}")
 
             if config.behavior.click_order == 1:
                 all_links = non_ad_links + ads
@@ -210,17 +251,21 @@ def main():
 
             elif config.behavior.click_order == 3:
                 if non_ad_links:
-                    all_links = [non_ad_links[0]] + [ads[0]] + non_ad_links[1:] + ads[1:]
+                    all_links = [non_ad_links[0]] + \
+                        [ads[0]] + non_ad_links[1:] + ads[1:]
                 else:
-                    logger.debug("Couldn't found non-ads! Continue with ads only.")
+                    logger.debug(
+                        "Couldn't found non-ads! Continue with ads only.")
                     all_links = ads
 
             elif config.behavior.click_order == 4:
                 all_links = list(
                     filterfalse(
-                        lambda x: not x, chain.from_iterable(zip_longest(non_ad_links, ads))
-                    )
-                )
+                        lambda x: not x,
+                        chain.from_iterable(
+                            zip_longest(
+                                non_ad_links,
+                                ads))))
 
             else:
                 all_links = ads + non_ad_links
@@ -231,7 +276,8 @@ def main():
             if shopping_ads:
                 logger.info("Clicking shopping ads with delays...")
                 for s_ad in shopping_ads:
-                    time.sleep(random.randint(5, 12)) # 5 se 12 second ka random wait
+                    # 5 se 12 second ka random wait
+                    time.sleep(random.randint(5, 12))
                     search_controller.click_shopping_ads([s_ad])
 
             if all_links:
@@ -247,7 +293,10 @@ def main():
                 hooks.after_clicks_hook(driver)
 
             if config.behavior.telegram_enabled:
-                notify_matching_ads(query, links=ads + shopping_ads, stats=search_controller.stats)
+                notify_matching_ads(
+                    query,
+                    links=ads + shopping_ads,
+                    stats=search_controller.stats)
 
             logger.info(search_controller.stats)
 
@@ -261,7 +310,9 @@ def main():
         details = traceback.format_tb(exp.__traceback__)
         logger.debug(f"Exception details: \n{''.join(details)}")
 
-        logger.debug(f"Exception cause: {exp.__cause__}") if exp.__cause__ else None
+        logger.debug(
+            f"Exception cause: {
+                exp.__cause__}") if exp.__cause__ else None
 
         if config.behavior.hooks_enabled:
             hooks.exception_hook(driver)

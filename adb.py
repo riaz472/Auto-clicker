@@ -26,13 +26,16 @@ class ADBController:
                     self.devices.append(device_id)
 
             if not self.devices:
-                raise SystemExit("No device was found! Please connect at least 1 device.")
+                raise SystemExit(
+                    "No device was found! Please connect at least 1 device.")
 
             for device in self.devices:
                 logger.debug(f"Android device: {device}")
 
         except Exception as exp:
-            raise Exception(f"An error occurred while running: '{' '.join(command)}'") from exp
+            raise Exception(
+                f"An error occurred while running: '{
+                    ' '.join(command)}'") from exp
 
     @staticmethod
     def open_url(url: str, device_id: str) -> None:
@@ -62,12 +65,15 @@ class ADBController:
             result = subprocess.run(command, capture_output=True, text=True)
 
             if result.returncode == 0:
-                logger.info(f"URL[{url}] was successfully opened on device[{device_id}]")
+                logger.info(
+                    f"URL[{url}] was successfully opened on device[{device_id}]")
             else:
                 logger.error(f"Error opening URL: {result.stderr}")
 
         except Exception as exp:
-            raise Exception(f"An error occurred while running: '{' '.join(command)}'") from exp
+            raise Exception(
+                f"An error occurred while running: '{
+                    ' '.join(command)}'") from exp
 
     @staticmethod
     def send_keyevent(keycode: int) -> None:
@@ -87,7 +93,9 @@ class ADBController:
                 logger.error(f"Couldn't send key event: {result.stderr}")
 
         except Exception as exp:
-            raise Exception(f"An error occurred while running: '{' '.join(command)}'") from exp
+            raise Exception(
+                f"An error occurred while running: '{
+                    ' '.join(command)}'") from exp
 
     @staticmethod
     def send_swipe(x1: int, y1: int, x2: int, y2: int, duration: int) -> None:
@@ -123,7 +131,9 @@ class ADBController:
                 logger.error(f"Error during swipe: {result.stderr}")
 
         except Exception as exp:
-            raise Exception(f"An error occurred while running: '{' '.join(command)}'") from exp
+            raise Exception(
+                f"An error occurred while running: '{
+                    ' '.join(command)}'") from exp
 
     @staticmethod
     def close_browser() -> None:
@@ -140,7 +150,9 @@ class ADBController:
                 logger.error(f"Couldn't send key event: {result.stderr}")
 
         except Exception as exp:
-            raise Exception(f"An error occurred while running: '{' '.join(command)}'") from exp
+            raise Exception(
+                f"An error occurred while running: '{
+                    ' '.join(command)}'") from exp
 
 
 adb_controller = ADBController()

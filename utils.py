@@ -52,7 +52,8 @@ def get_random_user_agent_string() -> str:
     filtered_user_agents = []
 
     if current_os == "Windows":
-        filtered_user_agents = [ua for ua in all_user_agents if "Windows" in ua]
+        filtered_user_agents = [
+            ua for ua in all_user_agents if "Windows" in ua]
 
     elif current_os == "Darwin":
         filtered_user_agents = [
@@ -63,8 +64,9 @@ def get_random_user_agent_string() -> str:
 
     elif current_os == "Linux":
         filtered_user_agents = [
-            ua for ua in all_user_agents if any(platform in ua for platform in ("Linux", "Android"))
-        ]
+            ua for ua in all_user_agents if any(
+                platform in ua for platform in (
+                    "Linux", "Android"))]
 
     else:
         # fallback to all agents if no matching OS found
@@ -100,7 +102,8 @@ def _get_user_agents(user_agent_file: Path) -> list[str]:
     return user_agents
 
 
-def get_location(geolocation_db_client: GeolocationDB, proxy: str) -> tuple[float, float, str, str]:
+def get_location(geolocation_db_client: GeolocationDB,
+                 proxy: str) -> tuple[float, float, str, str]:
     """Get latitude, longitude, country code, and timezone of ip address
 
     :type geolocation_db_client: GeolocationDB
@@ -118,7 +121,10 @@ def get_location(geolocation_db_client: GeolocationDB, proxy: str) -> tuple[floa
     if config.webdriver.auth:
         for repeat in range(2):
             try:
-                response = requests.get("https://api.ipify.org", proxies=proxies_header, timeout=5)
+                response = requests.get(
+                    "https://api.ipify.org",
+                    proxies=proxies_header,
+                    timeout=5)
                 ip_address = response.text
 
                 if not ip_address:
@@ -132,8 +138,9 @@ def get_location(geolocation_db_client: GeolocationDB, proxy: str) -> tuple[floa
                 try:
                     logger.debug("Trying with ipv4.webshare.io...")
                     response = requests.get(
-                        "https://ipv4.webshare.io/", proxies=proxies_header, timeout=5
-                    )
+                        "https://ipv4.webshare.io/",
+                        proxies=proxies_header,
+                        timeout=5)
                     ip_address = response.text
 
                     if not ip_address:
@@ -147,12 +154,12 @@ def get_location(geolocation_db_client: GeolocationDB, proxy: str) -> tuple[floa
                     try:
                         logger.debug("Trying with ipconfig.io...")
                         response = requests.get(
-                            "https://ipconfig.io/json", proxies=proxies_header, timeout=5
-                        )
+                            "https://ipconfig.io/json", proxies=proxies_header, timeout=5)
                         ip_address = response.json().get("ip")
 
                         if not ip_address:
-                            raise Exception("Failed with https://ipconfig.io/json")
+                            raise Exception(
+                                "Failed with https://ipconfig.io/json")
 
                         break
 
@@ -163,7 +170,8 @@ def get_location(geolocation_db_client: GeolocationDB, proxy: str) -> tuple[floa
                             break
 
                         request_retry_timeout = 60 * config.behavior.wait_factor
-                        logger.info(f"Request will be resend after {request_retry_timeout} seconds")
+                        logger.info(
+                            f"Request will be resend after {request_retry_timeout} seconds")
 
                         sleep(request_retry_timeout)
 
@@ -187,12 +195,14 @@ def get_location(geolocation_db_client: GeolocationDB, proxy: str) -> tuple[floa
 
     if db_result:
         latitude, longitude, country_code = db_result
-        logger.debug(f"Cached latitude and longitude for {ip_address}: ({latitude}, {longitude})")
+        logger.debug(
+            f"Cached latitude and longitude for {ip_address}: ({latitude}, {longitude})")
         logger.debug(f"Cached country code for {ip_address}: {country_code}")
 
         if not country_code:
             try:
-                response = requests.get(f"https://ipapi.co/{ip_address}/json/", timeout=5)
+                response = requests.get(
+                    f"https://ipapi.co/{ip_address}/json/", timeout=5)
                 country_code = response.json().get("country_code")
                 timezone = response.json().get("timezone")
                 logger.debug(f"Country code for {ip_address}: {country_code}")
@@ -200,12 +210,14 @@ def get_location(geolocation_db_client: GeolocationDB, proxy: str) -> tuple[floa
             except Exception:
                 try:
                     response = requests.get(
-                        "https://ifconfig.co/json", proxies=proxies_header, timeout=5
-                    )
+                        "https://ifconfig.co/json",
+                        proxies=proxies_header,
+                        timeout=5)
                     country_code = response.json().get("country_iso")
                     timezone = response.json().get("time_zone")
                 except Exception:
-                    logger.debug(f"Couldn't find country code for {ip_address}!")
+                    logger.debug(
+                        f"Couldn't find country code for {ip_address}!")
 
         return (float(latitude), float(longitude), country_code, timezone)
 
@@ -216,7 +228,8 @@ def get_location(geolocation_db_client: GeolocationDB, proxy: str) -> tuple[floa
 
         while retry_count < max_retry_count:
             try:
-                response = requests.get(f"https://ipapi.co/{ip_address}/json/", timeout=5)
+                response = requests.get(
+                    f"https://ipapi.co/{ip_address}/json/", timeout=5)
                 latitude, longitude, country_code, timezone = (
                     response.json().get("latitude"),
                     response.json().get("longitude"),
@@ -234,8 +247,9 @@ def get_location(geolocation_db_client: GeolocationDB, proxy: str) -> tuple[floa
 
                 try:
                     response = requests.get(
-                        "https://ifconfig.co/json", proxies=proxies_header, timeout=5
-                    )
+                        "https://ifconfig.co/json",
+                        proxies=proxies_header,
+                        timeout=5)
                     latitude, longitude, country_code, timezone = (
                         response.json().get("latitude"),
                         response.json().get("longitude"),
@@ -253,8 +267,7 @@ def get_location(geolocation_db_client: GeolocationDB, proxy: str) -> tuple[floa
 
                     try:
                         response = requests.get(
-                            "https://ipconfig.io/json", proxies=proxies_header, timeout=5
-                        )
+                            "https://ipconfig.io/json", proxies=proxies_header, timeout=5)
                         latitude, longitude, country_code, timezone = (
                             response.json().get("latitude"),
                             response.json().get("longitude"),
@@ -263,7 +276,8 @@ def get_location(geolocation_db_client: GeolocationDB, proxy: str) -> tuple[floa
                         )
 
                         if not (latitude and longitude and country_code):
-                            raise Exception("Failed with https://ipconfig.io/json")
+                            raise Exception(
+                                "Failed with https://ipconfig.io/json")
 
                         break
                     except Exception as exp:
@@ -280,14 +294,17 @@ def get_location(geolocation_db_client: GeolocationDB, proxy: str) -> tuple[floa
             sleep(0.5 * config.behavior.wait_factor)
 
         if latitude and longitude and country_code:
-            logger.debug(f"Latitude and longitude for {ip_address}: ({latitude}, {longitude})")
+            logger.debug(
+                f"Latitude and longitude for {ip_address}: ({latitude}, {longitude})")
             logger.debug(f"Country code for {ip_address}: {country_code}")
 
-            geolocation_db_client.save_geolocation(ip_address, latitude, longitude, country_code)
+            geolocation_db_client.save_geolocation(
+                ip_address, latitude, longitude, country_code)
 
             return (latitude, longitude, country_code, timezone)
         else:
-            logger.error(f"Couldn't find latitude, longitude, and country_code for {ip_address}!")
+            logger.error(
+                f"Couldn't find latitude, longitude, and country_code for {ip_address}!")
             return (None, None, None, None)
 
 
@@ -353,7 +370,8 @@ def add_cookies(driver: undetected_chromedriver.Chrome) -> None:
         try:
             cookies = json.loads(cookie_file.read())
         except Exception:
-            logger.error("Failed to read cookies file. Check format and try again.")
+            logger.error(
+                "Failed to read cookies file. Check format and try again.")
             raise SystemExit()
 
     for cookie in cookies:
@@ -412,7 +430,8 @@ def solve_recaptcha(
 
         logger.debug(f"Response: {response.text}")
 
-        error_to_exit, error_to_continue, error_to_break = _check_error(response.text)
+        error_to_exit, error_to_continue, error_to_break = _check_error(
+            response.text)
 
         if error_to_exit:
             raise SystemExit()
@@ -479,7 +498,8 @@ def take_screenshot(driver: undetected_chromedriver.Chrome) -> None:
         logger.info(f"Saved screenshot during exception as {filename}")
 
 
-def generate_click_report(click_results: list[tuple[str, str, str]], report_date: str) -> None:
+def generate_click_report(
+        click_results: list[tuple[str, str, str]], report_date: str) -> None:
     """Update results file with new rows
 
     :type click_results: list
@@ -518,7 +538,12 @@ def generate_click_report(click_results: list[tuple[str, str, str]], report_date
 
     for result in click_results:
         url, click_count, category, click_time, query = result
-        sheet.append((url, query, click_count, f"{report_date} {click_time}", category))
+        sheet.append(
+            (url,
+             query,
+             click_count,
+             f"{report_date} {click_time}",
+                category))
 
     for column_letter in ("B", "C", "D", "E"):
         sheet.column_dimensions[column_letter].alignment = center_align
@@ -542,7 +567,8 @@ def get_random_sleep(start: float, end: float) -> float:
     return round(random.uniform(start, end), 2)
 
 
-def _check_error(response_text: str, request_type: str = "in_php") -> tuple[bool, bool, bool]:
+def _check_error(response_text: str,
+                 request_type: str = "in_php") -> tuple[bool, bool, bool]:
     """Check errors returned from requests to in.php or res.php endpoints
 
     :type response_text: str
@@ -560,18 +586,21 @@ def _check_error(response_text: str, request_type: str = "in_php") -> tuple[bool
 
     if request_type == "in_php":
         if "ERROR_WRONG_USER_KEY" in response_text or "ERROR_KEY_DOES_NOT_EXIST" in response_text:
-            logger.error("Invalid API key. Please check your 2captcha API key.")
+            logger.error(
+                "Invalid API key. Please check your 2captcha API key.")
             error_to_exit = True
 
         elif "ERROR_ZERO_BALANCE" in response_text:
-            logger.error("You don't have funds on your account. Please load your account.")
+            logger.error(
+                "You don't have funds on your account. Please load your account.")
             error_to_exit = True
 
         elif "ERROR_NO_SLOT_AVAILABLE" in response_text:
             logger.error(
                 "The queue of your captchas that are not distributed to workers is too long."
             )
-            logger.info(f"Waiting {error_wait} seconds before sending new request...")
+            logger.info(
+                f"Waiting {error_wait} seconds before sending new request...")
             sleep(error_wait)
 
             error_to_continue = True
@@ -592,7 +621,8 @@ def _check_error(response_text: str, request_type: str = "in_php") -> tuple[bool
 
     elif request_type == "res_php":
         if "ERROR_WRONG_USER_KEY" in response_text or "ERROR_KEY_DOES_NOT_EXIST" in response_text:
-            logger.error("Invalid API key. Please check your 2captcha API key.")
+            logger.error(
+                "Invalid API key. Please check your 2captcha API key.")
             error_to_exit = True
 
         elif "ERROR_CAPTCHA_UNSOLVABLE" in response_text:
@@ -600,7 +630,8 @@ def _check_error(response_text: str, request_type: str = "in_php") -> tuple[bool
             error_to_exit = True
 
         elif "CAPCHA_NOT_READY" in response_text:
-            logger.info(f"Waiting {error_wait} seconds before checking response again...")
+            logger.info(
+                f"Waiting {error_wait} seconds before checking response again...")
             sleep(error_wait)
 
             error_to_continue = True
@@ -631,7 +662,9 @@ def get_locale_language(country_code: str) -> str:
 
     locale_language = locales.get(country_code, ["en"])
 
-    logger.debug(f"Locale language code for {country_code}: {locale_language[0]}")
+    logger.debug(
+        f"Locale language code for {country_code}: {
+            locale_language[0]}")
 
     return locale_language
 
@@ -669,7 +702,11 @@ def _make_boost_request(url: str, proxy: str, user_agent: str) -> None:
     proxy_config = {"http": f"http://{proxy}", "https": f"http://{proxy}"}
 
     try:
-        response = requests.get(url, headers=headers, proxies=proxy_config, timeout=5)
+        response = requests.get(
+            url,
+            headers=headers,
+            proxies=proxy_config,
+            timeout=5)
         logger.debug(
             f"Boosted [{url}] via [{proxy.split('@')[1] if '@' in proxy else proxy}] "
             f"UA={headers['User-Agent']}, Response code: {response.status_code}"
@@ -699,4 +736,8 @@ def boost_requests(url: str) -> None:
 
     with ThreadPoolExecutor(max_workers=10) as executor:
         for _ in range(10):
-            executor.submit(_make_boost_request, url, next(proxy), next(user_agent))
+            executor.submit(
+                _make_boost_request,
+                url,
+                next(proxy),
+                next(user_agent))

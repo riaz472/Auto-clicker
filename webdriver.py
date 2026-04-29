@@ -1,3 +1,5 @@
+import seleniumbase
+from typing import Optional
 import os
 import random
 import shutil
@@ -78,7 +80,8 @@ class CustomChrome(undetected_chromedriver.Chrome):
                         % (e.__class__.__name__, e)
                     )
                 else:
-                    # logger.debug("successfully removed %s" % self.user_data_dir)
+                    # logger.debug("successfully removed %s" %
+                    # self.user_data_dir)
                     break
 
                 sleep(0.1 * config.behavior.wait_factor)
@@ -119,45 +122,45 @@ class CustomChrome(undetected_chromedriver.Chrome):
             else:
                 sleep(0.05 * config.behavior.wait_factor)
 
-import seleniumbase
-from typing import Optional
-import os
 
 def create_seleniumbase_driver(
-    proxy: Optional[str] = None, 
-    user_agent: Optional[str] = None, 
+    proxy: Optional[str] = None,
+    user_agent: Optional[str] = None,
     plugin_folder_name: Optional[str] = None
 ) -> tuple:
     """
     Create SeleniumBase Chrome webdriver instance.
     Accepts 3 arguments to match ad_clicker.py calls.
     """
-    
+
     # Driver configuration
     driver = seleniumbase.Driver(
         browser="chrome",
         uc=True,                # Undetected mode
         headless2=True,         # Headless mode for GitHub Actions
-        proxy=proxy,            
-        agent=user_agent,       
-        no_sandbox=True,        
+        proxy=proxy,
+        agent=user_agent,
+        no_sandbox=True,
         disable_gpu=True,
         incognito=True
     )
 
     # Default country code
-    country_code = "US" 
-    
+    country_code = "US"
+
     return driver, country_code
+
 
 def execute_stealth_js_code(driver):
     """
     Optional: Stealth scripts execute karne ke liye
     """
     try:
-        driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+        driver.execute_script(
+            "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
     except Exception:
         pass
+
 
 # ad_clicker.py is name se function call karta hai
 create_webdriver = create_seleniumbase_driver

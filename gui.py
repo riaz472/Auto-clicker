@@ -36,7 +36,13 @@ class PathsFrame(customtkinter.CTkFrame):
         self._title = customtkinter.CTkLabel(
             self, text="PATHS", height=30, fg_color="gray25", corner_radius=10
         )
-        self._title.grid(row=0, column=0, columnspan=3, padx=10, pady=10, sticky="ew")
+        self._title.grid(
+            row=0,
+            column=0,
+            columnspan=3,
+            padx=10,
+            pady=10,
+            sticky="ew")
 
         self._query_file = self._add_path_input(
             row=1, label="Query file", default_value=config.paths.query_file
@@ -48,8 +54,7 @@ class PathsFrame(customtkinter.CTkFrame):
             row=3, label="User agents", default_value=config.paths.user_agents
         )
         self._filtered_domains = self._add_path_input(
-            row=4, label="Filtered domains", default_value=config.paths.filtered_domains
-        )
+            row=4, label="Filtered domains", default_value=config.paths.filtered_domains)
 
     def open_file_dialog(self, textbox: customtkinter.CTkTextbox) -> None:
         """Open the file selection dialog
@@ -59,8 +64,8 @@ class PathsFrame(customtkinter.CTkFrame):
         """
 
         file_path = filedialog.askopenfilename(
-            title="Select a file", filetypes=(("Text files", "*.txt"), ("All files", "*.*"))
-        )
+            title="Select a file", filetypes=(
+                ("Text files", "*.txt"), ("All files", "*.*")))
 
         # update the entry with the selected file path
         if file_path:
@@ -81,7 +86,11 @@ class PathsFrame(customtkinter.CTkFrame):
             "filtered_domains": self._filtered_domains.get("1.0", "end-1c"),
         }
 
-    def _add_path_input(self, row: int, label: str, default_value: str) -> customtkinter.CTkTextbox:
+    def _add_path_input(
+            self,
+            row: int,
+            label: str,
+            default_value: str) -> customtkinter.CTkTextbox:
         """Add input section to take path
 
         :type row: int
@@ -97,7 +106,8 @@ class PathsFrame(customtkinter.CTkFrame):
         path_label = customtkinter.CTkLabel(self, text=label)
         path_label.grid(row=row, column=0, padx=10, sticky="w")
 
-        path_textbox = customtkinter.CTkTextbox(self, height=self.button_height, corner_radius=10)
+        path_textbox = customtkinter.CTkTextbox(
+            self, height=self.button_height, corner_radius=10)
         path_textbox.grid(row=row, column=1, pady=5, sticky="ew")
         path_textbox.insert("1.0", default_value)
 
@@ -107,7 +117,12 @@ class PathsFrame(customtkinter.CTkFrame):
             height=self.button_height,
             command=lambda: self.open_file_dialog(path_textbox),
         )
-        open_file_button.grid(row=row, column=2, padx=self.relative_width, pady=5, sticky="ew")
+        open_file_button.grid(
+            row=row,
+            column=2,
+            padx=self.relative_width,
+            pady=5,
+            sticky="ew")
 
         return path_textbox
 
@@ -123,27 +138,35 @@ class WebdriverFrame(customtkinter.CTkFrame):
         self.relative_height = master.winfo_screenheight() // 100
 
         self._title = customtkinter.CTkLabel(
-            self, text="WEBDRIVER", height=30, fg_color="gray25", corner_radius=10
-        )
-        self._title.grid(row=0, column=0, columnspan=3, padx=10, pady=10, sticky="ew")
+            self,
+            text="WEBDRIVER",
+            height=30,
+            fg_color="gray25",
+            corner_radius=10)
+        self._title.grid(
+            row=0,
+            column=0,
+            columnspan=3,
+            padx=10,
+            pady=10,
+            sticky="ew")
 
         self._proxy_input = self._add_input_field(row=1, label="Proxy")
         self._window_size_input = self._add_input_field(
-            row=2, label="Window size", default_value=config.webdriver.window_size
-        )
+            row=2, label="Window size", default_value=config.webdriver.window_size)
 
         self._auth_value = self._add_checkbox(
             row=3, column=0, label="Proxy Auth", enabled=config.webdriver.auth
         )
         self._incognito_value = self._add_checkbox(
-            row=3, column=1, label="Incognito", enabled=config.webdriver.incognito
-        )
+            row=3, column=1, label="Incognito", enabled=config.webdriver.incognito)
         self._shift_windows_value = self._add_checkbox(
-            row=3, column=2, label="Shift windows", enabled=config.webdriver.shift_windows
-        )
+            row=3, column=2, label="Shift windows", enabled=config.webdriver.shift_windows)
         self._country_domain_value = self._add_checkbox(
-            row=4, column=0, label="Country Domain", enabled=config.webdriver.country_domain
-        )
+            row=4,
+            column=0,
+            label="Country Domain",
+            enabled=config.webdriver.country_domain)
         self._language_from_proxy_value = self._add_checkbox(
             row=4,
             column=1,
@@ -151,8 +174,10 @@ class WebdriverFrame(customtkinter.CTkFrame):
             enabled=config.webdriver.language_from_proxy,
         )
         self._ss_on_exception_value = self._add_checkbox(
-            row=4, column=2, label="SS on Exception", enabled=config.webdriver.ss_on_exception
-        )
+            row=4,
+            column=2,
+            label="SS on Exception",
+            enabled=config.webdriver.ss_on_exception)
         self._use_seleniumbase_value = self._add_checkbox(
             row=5,
             column=1,
@@ -200,7 +225,13 @@ class WebdriverFrame(customtkinter.CTkFrame):
         input_textbox = customtkinter.CTkTextbox(
             self, height=self.relative_height, corner_radius=10
         )
-        input_textbox.grid(row=row, column=1, columnspan=2, padx=10, pady=5, sticky="ew")
+        input_textbox.grid(
+            row=row,
+            column=1,
+            columnspan=2,
+            padx=10,
+            pady=5,
+            sticky="ew")
 
         if default_value:
             input_textbox.insert("1.0", default_value)
@@ -208,8 +239,11 @@ class WebdriverFrame(customtkinter.CTkFrame):
         return input_textbox
 
     def _add_checkbox(
-        self, row: int, column: int, label: str, enabled: Optional[bool] = False
-    ) -> customtkinter.CTkTextbox:
+            self,
+            row: int,
+            column: int,
+            label: str,
+            enabled: Optional[bool] = False) -> customtkinter.CTkTextbox:
         """Add checkbox field for bool values
 
         :type row: int
@@ -250,9 +284,18 @@ class BehaviorFrame(customtkinter.CTkFrame):
         self.relative_height = master.winfo_screenheight() // 100
 
         self._title = customtkinter.CTkLabel(
-            self, text="BEHAVIOR", height=30, fg_color="gray25", corner_radius=10
-        )
-        self._title.grid(row=0, column=0, columnspan=7, padx=10, pady=10, sticky="ew")
+            self,
+            text="BEHAVIOR",
+            height=30,
+            fg_color="gray25",
+            corner_radius=10)
+        self._title.grid(
+            row=0,
+            column=0,
+            columnspan=7,
+            padx=10,
+            pady=10,
+            sticky="ew")
 
         self._query_input = self._add_input_field(
             row=1, column=0, label="Query", default_value=config.behavior.query
@@ -310,12 +353,13 @@ class BehaviorFrame(customtkinter.CTkFrame):
             default_value=str(config.behavior.max_scroll_limit),
         )
         self._click_order_input = self._add_input_field(
-            row=5, column=4, label="Click order", default_value=config.behavior.click_order
-        )
+            row=5, column=4, label="Click order", default_value=config.behavior.click_order)
 
         self._browser_count_input = self._add_input_field(
-            row=6, column=0, label="Browser count", default_value=config.behavior.browser_count
-        )
+            row=6,
+            column=0,
+            label="Browser count",
+            default_value=config.behavior.browser_count)
         self._multiprocess_style_input = self._add_input_field(
             row=6,
             column=4,
@@ -324,11 +368,12 @@ class BehaviorFrame(customtkinter.CTkFrame):
         )
 
         self._loop_wait_time_input = self._add_input_field(
-            row=7, column=0, label="Loop wait time", default_value=config.behavior.loop_wait_time
-        )
+            row=7,
+            column=0,
+            label="Loop wait time",
+            default_value=config.behavior.loop_wait_time)
         self._wait_factor_input = self._add_input_field(
-            row=7, column=4, label="Wait factor", default_value=config.behavior.wait_factor
-        )
+            row=7, column=4, label="Wait factor", default_value=config.behavior.wait_factor)
 
         excludes_label = customtkinter.CTkLabel(self, text="Excludes")
         excludes_label.grid(row=8, column=0, padx=10, sticky="w")
@@ -336,30 +381,38 @@ class BehaviorFrame(customtkinter.CTkFrame):
         self._excludes_input = customtkinter.CTkTextbox(
             self, height=self.relative_height, corner_radius=10
         )
-        self._excludes_input.grid(row=8, column=1, columnspan=6, padx=10, pady=5, sticky="ew")
+        self._excludes_input.grid(
+            row=8,
+            column=1,
+            columnspan=6,
+            padx=10,
+            pady=5,
+            sticky="ew")
         self._excludes_input.insert("1.0", config.behavior.excludes)
 
         self._check_shopping_ads_value = self._add_checkbox(
-            row=9, column=0, label="Check shopping ads", enabled=config.behavior.check_shopping_ads
-        )
+            row=9,
+            column=0,
+            label="Check shopping ads",
+            enabled=config.behavior.check_shopping_ads)
         self._random_mouse_value = self._add_checkbox(
-            row=9, column=1, label="Random mouse", enabled=config.behavior.random_mouse
-        )
+            row=9, column=1, label="Random mouse", enabled=config.behavior.random_mouse)
         self._custom_cookies_value = self._add_checkbox(
-            row=9, column=2, label="Custom cookies", enabled=config.behavior.custom_cookies
-        )
+            row=9, column=2, label="Custom cookies", enabled=config.behavior.custom_cookies)
         self._hooks_enabled_value = self._add_checkbox(
-            row=9, column=3, label="Hooks enabled", enabled=config.behavior.hooks_enabled
-        )
+            row=9, column=3, label="Hooks enabled", enabled=config.behavior.hooks_enabled)
         self._telegram_enabled_value = self._add_checkbox(
-            row=9, column=4, label="Telegram enabled", enabled=config.behavior.telegram_enabled
-        )
+            row=9,
+            column=4,
+            label="Telegram enabled",
+            enabled=config.behavior.telegram_enabled)
         self._send_to_android_value = self._add_checkbox(
-            row=9, column=5, label="Send to Android", enabled=config.behavior.send_to_android
-        )
+            row=9,
+            column=5,
+            label="Send to Android",
+            enabled=config.behavior.send_to_android)
         self._request_boost_value = self._add_checkbox(
-            row=9, column=6, label="Request boost", enabled=config.behavior.request_boost
-        )
+            row=9, column=6, label="Request boost", enabled=config.behavior.request_boost)
 
     def get_behavior_config(self) -> dict[str, str]:
         """Get behavior config values
@@ -394,8 +447,11 @@ class BehaviorFrame(customtkinter.CTkFrame):
         }
 
     def _add_input_field(
-        self, row: int, column: int, label: str, default_value: Optional[str] = None
-    ) -> customtkinter.CTkTextbox:
+            self,
+            row: int,
+            column: int,
+            label: str,
+            default_value: Optional[str] = None) -> customtkinter.CTkTextbox:
         """Add input field
 
         :type row: int
@@ -416,7 +472,13 @@ class BehaviorFrame(customtkinter.CTkFrame):
         input_textbox = customtkinter.CTkTextbox(
             self, height=self.relative_height, corner_radius=10
         )
-        input_textbox.grid(row=row, column=column + 1, columnspan=2, padx=10, pady=5, sticky="ew")
+        input_textbox.grid(
+            row=row,
+            column=column + 1,
+            columnspan=2,
+            padx=10,
+            pady=5,
+            sticky="ew")
 
         if default_value:
             input_textbox.insert("1.0", default_value)
@@ -424,8 +486,11 @@ class BehaviorFrame(customtkinter.CTkFrame):
         return input_textbox
 
     def _add_checkbox(
-        self, row: int, column: int, label: str, enabled: Optional[bool] = False
-    ) -> customtkinter.CTkTextbox:
+            self,
+            row: int,
+            column: int,
+            label: str,
+            enabled: Optional[bool] = False) -> customtkinter.CTkTextbox:
         """Add checkbox field for bool values
 
         :type row: int
@@ -475,7 +540,15 @@ class ActionButtonsFrame(customtkinter.CTkFrame):
             height=self.button_height,
             command=master.save_button_callback,
         )
-        self.save_button.grid(row=3, column=0, columnspan=3, padx=10, pady=(10, 5), sticky="ew")
+        self.save_button.grid(
+            row=3,
+            column=0,
+            columnspan=3,
+            padx=10,
+            pady=(
+                10,
+                5),
+            sticky="ew")
 
         self.report_button = customtkinter.CTkButton(
             self,
@@ -483,7 +556,9 @@ class ActionButtonsFrame(customtkinter.CTkFrame):
             height=self.button_height,
             command=master.report_generation_command,
         )
-        self.report_button.grid(row=3, column=3, columnspan=3, padx=10, pady=(10, 5), sticky="ew")
+        self.report_button.grid(
+            row=3, column=3, columnspan=3, padx=10, pady=(
+                10, 5), sticky="ew")
 
         self.run_button_1 = customtkinter.CTkButton(
             self,
@@ -491,7 +566,13 @@ class ActionButtonsFrame(customtkinter.CTkFrame):
             height=self.button_height,
             command=master.ad_clicker_script,
         )
-        self.run_button_1.grid(row=4, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+        self.run_button_1.grid(
+            row=4,
+            column=0,
+            columnspan=2,
+            padx=10,
+            pady=5,
+            sticky="ew")
 
         self.run_button_2 = customtkinter.CTkButton(
             self,
@@ -499,7 +580,13 @@ class ActionButtonsFrame(customtkinter.CTkFrame):
             height=self.button_height,
             command=master.run_ad_clicker_script,
         )
-        self.run_button_2.grid(row=4, column=2, columnspan=2, padx=10, pady=5, sticky="ew")
+        self.run_button_2.grid(
+            row=4,
+            column=2,
+            columnspan=2,
+            padx=10,
+            pady=5,
+            sticky="ew")
 
         self.run_button_3 = customtkinter.CTkButton(
             self,
@@ -507,7 +594,13 @@ class ActionButtonsFrame(customtkinter.CTkFrame):
             height=self.button_height,
             command=master.run_in_loop_script,
         )
-        self.run_button_3.grid(row=4, column=4, columnspan=2, padx=10, pady=5, sticky="ew")
+        self.run_button_3.grid(
+            row=4,
+            column=4,
+            columnspan=2,
+            padx=10,
+            pady=5,
+            sticky="ew")
 
 
 class ConfigGUI(customtkinter.CTk):
@@ -529,10 +622,22 @@ class ConfigGUI(customtkinter.CTk):
         self.webdriver_frame.grid(row=0, column=1, padx=10, sticky="nsew")
 
         self.behavior_frame = BehaviorFrame(self)
-        self.behavior_frame.grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
+        self.behavior_frame.grid(
+            row=1,
+            column=0,
+            columnspan=2,
+            padx=10,
+            pady=10,
+            sticky="ew")
 
         self.action_buttons_frame = ActionButtonsFrame(self)
-        self.action_buttons_frame.grid(row=2, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
+        self.action_buttons_frame.grid(
+            row=2,
+            column=0,
+            columnspan=2,
+            padx=10,
+            pady=10,
+            sticky="ew")
 
     def save_button_callback(self) -> None:
         """Save configuration to config.json file"""
@@ -608,4 +713,6 @@ if __name__ == "__main__":
         details = traceback.format_tb(exp.__traceback__)
         logger.debug(f"Exception details: \n{''.join(details)}")
 
-        logger.debug(f"Exception cause: {exp.__cause__}") if exp.__cause__ else None
+        logger.debug(
+            f"Exception cause: {
+                exp.__cause__}") if exp.__cause__ else None
