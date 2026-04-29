@@ -23,9 +23,9 @@ def get_proxies() -> list[str]:
 
     filepath = Path(config.paths.proxy_file)
 
-    if not filepath.exists():
-        raise SystemExit(f"Couldn't find proxy file: {filepath}")
-
+if not filepath.exists():
+        logger.warning(f"Proxy file not found at {filepath}. Running without proxy...")
+        return [] # Khali list bhejen taaki bot crash na ho
     with open(filepath, encoding="utf-8") as proxyfile:
         proxies = [
             proxy.strip().replace("'", "").replace('"', "")
