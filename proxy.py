@@ -23,9 +23,10 @@ def get_proxies() -> list[str]:
 
     filepath = Path(config.paths.proxy_file)
 
-if not filepath.exists():
-        logger.warning(f"Proxy file not found at {filepath}. Running without proxy...")
-        return [] # Khali list bhejen taaki bot crash na ho
+    if not filepath.exists():
+        logger.warning(f"Proxy file not found: {filepath}. Running without proxy.")
+        return []
+
     with open(filepath, encoding="utf-8") as proxyfile:
         proxies = [
             proxy.strip().replace("'", "").replace('"', "")
@@ -33,7 +34,6 @@ if not filepath.exists():
         ]
 
     return proxies
-
 
 def install_plugin(
     chrome_options: ChromeOptions,
